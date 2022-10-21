@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import LoginSvg from '../../assets/icons/log-in.svg';
 import LeftSvg from '../../assets/images/left.svg';
@@ -12,7 +12,7 @@ import { AutorizationWrapper, LeftCol, RightCol } from './Autorization.elements'
 const Autorization = () => {
   const [loginLayout, setLoginLayout] = useState<boolean>(true);
 
-  const changeFormLayout = (e: any) => {
+  const changeFormLayout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoginLayout(!loginLayout);
   };
