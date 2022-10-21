@@ -44,6 +44,10 @@ export const InputBlock = styled.div`
       &:focus {
         box-shadow: 0 0 0 0.2rem rgb(247 104 92 / 25%);
       }
+
+      &::placeholder {
+        color: #f7685c;
+      }
     }
   }
 `;
