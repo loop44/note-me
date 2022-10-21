@@ -51,6 +51,11 @@ export const RightCol = styled.div`
     max-width: 20rem;
     display: flex;
     flex-direction: column;
+  }
+
+  & .formContent {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
   }
