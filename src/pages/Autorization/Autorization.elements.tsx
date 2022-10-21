@@ -93,14 +93,13 @@ export const RightCol = styled.div`
 
   .decoration {
     font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: 0.875rem;
     color: #a8a8b3;
     margin: 2.188rem 0;
     display: flex;
     width: 100%;
     justify-content: center;
-    gap: 14px;
+    gap: 0.875rem;
 
     .main {
       flex-shrink: 1;
@@ -111,9 +110,9 @@ export const RightCol = styled.div`
       flex-shrink: 0;
       height: 1px;
       background-color: #a8a8b3;
-      width: 76px;
+      width: 4.75rem;
       position: relative;
-      top: 8px;
+      top: 0.5rem;
     }
   }
 `;
