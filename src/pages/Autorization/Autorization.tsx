@@ -2,36 +2,56 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import LoginSvg from '../../assets/icons/log-in.svg';
+import closeSvg from '../../assets/icons/close.svg';
 import LeftSvg from '../../assets/images/left.svg';
-import LogoSvg from '../../assets/images/logo.svg';
-import { Button } from '../../components/Button';
-import { InputBlock } from '../../components/Input';
+import Login from '../../components/Login';
+import Register from '../../components/Register';
+import { AuthParams, Inputs } from '../../types/types';
 
-import { AutorizationWrapper, LeftCol, RightCol } from './Autorization.elements';
+import { AutorizationWrapper, Error, LeftCol, RightCol } from './Autorization.elements';
 
-type Inputs = {
-  registerName: string;
-  registerEmail: string;
-  registerPass: string;
-  loginEmail: string;
-  loginPass: string;
-};
+interface AutorazationProps {
+  fetchLogin: (params: AuthParams) => void;
+  fetchRegister: (params: AuthParams) => void;
+  closeError: () => void;
+  error: null | string;
+}
 
-const Autorization = () => {
+const Autorization: React.FC<AutorazationProps> = ({
+  fetchLogin,
+  fetchRegister,
+  error,
+  closeError
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<Inputs>();
-  const onLoginSubmit: SubmitHandler<Inputs> = (data, e) => console.log('Login', data, e);
-  const onRegisterSubmit: SubmitHandler<Inputs> = (data, e) => console.log('Register', data, e);
 
   const [loginLayout, setLoginLayout] = useState<boolean>(true);
+
+  const onLoginSubmit: SubmitHandler<Inputs> = (data) => {
+    const values = {
+      email: data.loginEmail,
+      password: String(data.loginPass)
+    };
+    fetchLogin(values);
+  };
+
+  const onRegisterSubmit: SubmitHandler<Inputs> = (data) => {
+    const values = {
+      username: data.registerName,
+      email: data.registerEmail,
+      password: data.registerPass
+    };
+    fetchRegister(values);
+  };
 
   const changeFormLayout = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoginLayout(!loginLayout);
+    closeError();
   };
 
   return (
@@ -57,135 +77,41 @@ const Autorization = () => {
             className="formContent"
           >
             {loginLayout ? (
-              <form onSubmit={handleSubmit(onLoginSubmit)}>
-                <img src={LogoSvg} alt="" />
-                <InputBlock className={errors.loginEmail && 'error'}>
-                  <p>{errors.loginEmail ? errors.loginEmail?.message : 'Login'}</p>
-                  <input
-                    {...register('loginEmail', {
-                      required: 'Login is required',
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: 'Entered value does not match email format'
-                      },
-                      maxLength: {
-                        value: 60,
-                        message: 'Email must be lower than 60 characters'
-                      }
-                    })}
-                    placeholder="Type your login here"
-                    type="email"
-                  />
-                </InputBlock>
-                <InputBlock className={errors.loginPass && 'error'}>
-                  <p>{errors.loginPass ? errors.loginPass?.message : 'Password'}</p>
-                  <input
-                    {...register('loginPass', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Password must be greater than 8 characters'
-                      },
-                      maxLength: {
-                        value: 20,
-                        message: 'Password must be lower than 20 characters'
-                      }
-                    })}
-                    placeholder="Type your password here"
-                    type="password"
-                  />
-                </InputBlock>
-                <button className="changeAuthMethod" onClick={changeFormLayout}>
-                  Sign up
-                </button>
-                <Button green name="sign-in">
-                  <img src={LoginSvg} alt="" />
-                  <span>Sign in</span>
-                </Button>
-                <div className="decoration">
-                  <span className="left" />
-                  <span className="main">or join anonymously</span>
-                  <span className="right" />
-                </div>
-                <Button name="anonymously">
-                  <img src={LoginSvg} alt="" />
-                  <span>Join anonymously</span>
-                </Button>
-              </form>
+              <Login
+                errors={errors}
+                handleSubmit={handleSubmit}
+                register={register}
+                onLoginSubmit={onLoginSubmit}
+                changeFormLayout={changeFormLayout}
+              />
             ) : (
-              <form onSubmit={handleSubmit(onRegisterSubmit)}>
-                <img src={LogoSvg} alt="" />
-                <InputBlock className={errors.registerName && 'error'}>
-                  <p>{errors.registerName ? errors.registerName?.message : 'Name'}</p>
-                  <input
-                    {...register('registerName', {
-                      required: 'Name is required',
-                      maxLength: {
-                        value: 20,
-                        message: 'Name must be lower than 20 characters'
-                      }
-                    })}
-                    placeholder="Type your name here"
-                    type="text"
-                  />
-                </InputBlock>
-                <InputBlock className={errors.registerEmail && 'error'}>
-                  <p>{errors.registerEmail ? errors.registerEmail?.message : 'Email'}</p>
-                  <input
-                    {...register('registerEmail', {
-                      required: 'Login is required',
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: 'Entered value does not match email format'
-                      },
-                      maxLength: {
-                        value: 60,
-                        message: 'Email must be lower than 60 characters'
-                      }
-                    })}
-                    placeholder="Type your email here"
-                    type="email"
-                  />
-                </InputBlock>
-                <InputBlock className={errors.registerPass && 'error'}>
-                  <p>{errors.registerPass ? errors.registerPass?.message : 'Password'}</p>
-                  <input
-                    {...register('registerPass', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Password must be greater than 8 characters'
-                      },
-                      maxLength: {
-                        value: 20,
-                        message: 'Password must be lower than 20 characters'
-                      }
-                    })}
-                    placeholder="Type your password here"
-                    type="password"
-                  />
-                </InputBlock>
-                <button className="changeAuthMethod" onClick={changeFormLayout}>
-                  Sign ip
-                </button>
-                <Button green name="sign-up">
-                  <img src={LoginSvg} alt="" />
-                  <span>Sign up</span>
-                </Button>
-                <div className="decoration">
-                  <span className="left" />
-                  <span className="main">or join anonymously</span>
-                  <span className="right" />
-                </div>
-                <Button name="anonymously">
-                  <img src={LoginSvg} alt="" />
-                  <span>Join anonymously</span>
-                </Button>
-              </form>
+              <Register
+                errors={errors}
+                handleSubmit={handleSubmit}
+                register={register}
+                onRegisterSubmit={onRegisterSubmit}
+                changeFormLayout={changeFormLayout}
+              />
             )}
           </motion.div>
         </AnimatePresence>
       </RightCol>
+      <AnimatePresence mode="wait">
+        {error && (
+          <Error
+            as={motion.div}
+            initial={{ y: '-5rem' }}
+            animate={{ y: '1.563rem' }}
+            exit={{ y: '-5rem' }}
+          >
+            <div>
+              <span>{error}</span>
+              {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+              <img onClick={closeError} onKeyDown={closeError} src={closeSvg} alt="" />
+            </div>
+          </Error>
+        )}
+      </AnimatePresence>
     </AutorizationWrapper>
   );
 };

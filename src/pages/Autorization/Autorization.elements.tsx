@@ -5,6 +5,7 @@ export const AutorizationWrapper = styled.div`
   max-width: 90rem;
   margin: 0 auto;
   display: flex;
+  position: relative;
 `;
 
 export const LeftCol = styled.div`
@@ -115,4 +116,26 @@ export const RightCol = styled.div`
       top: 0.5rem;
     }
   }
+`;
+
+export const Error = styled.div`
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7685c;
+    padding: 0.625rem 0.875rem;
+    position: relative;
+    color: #fff;
+    gap: 0.875rem;
+
+    > img {
+      cursor: pointer;
+    }
+  }
+
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
 `;
