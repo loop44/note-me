@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import axiosInctance from './api/axios';
-import Autorization from './pages/Autorization/Autorization';
+import Autorization from './pages/Autorization';
+import Notes from './pages/Notes';
 import { AuthParams } from './types/types';
 
 const GlobalStyle = createGlobalStyle`
@@ -17,6 +18,11 @@ const GlobalStyle = createGlobalStyle`
   html,
   body {
     font-family: 'Ubuntu', sans-serif;
+    height: 100%;
+  }
+
+  #root {
+    height: 100%;
   }
 `;
 
@@ -81,7 +87,7 @@ const App = () => {
     <>
       <GlobalStyle />
       {isAuth ? (
-        <h1>Autorized</h1>
+        <Notes />
       ) : (
         <Autorization
           fetchLogin={fetchLogin}
