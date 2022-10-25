@@ -1,5 +1,22 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
+
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  MeasuringStrategy,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates
+} from '@dnd-kit/sortable';
 
 import DarkModeSvg from '../../assets/icons/dark-mode.svg';
 import LogOutSvg from '../../assets/icons/log-out.svg';
@@ -11,22 +28,97 @@ import {
   ContentHeader,
   Greeting,
   Note,
-  NotePopup,
   NotesContent,
   NotesGrid,
   NotesWrapper,
   Sidebar
 } from './Notes.elements';
+import SortableItem from './SortableItem';
 
 const Notes = () => {
-  const items = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const notePopupRef = useRef<HTMLTextAreaElement>(null);
-
-  const closePopup = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target !== notePopupRef.current) {
-      setSelectedId(null);
+  const [items, setItems] = useState([
+    {
+      id: 1,
+      text: 'one'
+    },
+    {
+      id: 2,
+      text: 'two'
+    },
+    {
+      id: 3,
+      text: 'three'
+    },
+    {
+      id: 4,
+      text: 'four'
+    },
+    {
+      id: 5,
+      text: 'five'
+    },
+    {
+      id: 6,
+      text: 'six'
+    },
+    {
+      id: 7,
+      text: 'seven'
+    },
+    {
+      id: 8,
+      text: 'eight'
+    },
+    {
+      id: 9,
+      text: 'nine'
     }
+  ]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedText, setSelectedText] = useState<string>('');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5
+      }
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+
+    setActiveId(String(active.id));
+
+    items.forEach((item) => {
+      if (item.id === active.id) {
+        setSelectedText(item.text);
+      }
+    });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      return;
+    }
+
+    if (active.id !== over.id) {
+      setItems((notes) => {
+        const indexes = notes.map((n) => n.id);
+        const oldIndex = indexes.indexOf(Number(active.id));
+        const newIndex = indexes.indexOf(Number(over.id));
+        return arrayMove(notes, oldIndex, newIndex);
+      });
+    }
+
+    setActiveId(null);
+    setSelectedText('');
   };
 
   return (
@@ -52,41 +144,34 @@ const Notes = () => {
           <p>All your notes are here, in one place!</p>
         </Greeting>
         <NotesGrid>
-          {items.map((item) => (
-            <Note
-              key={item}
-              as={motion.div}
-              layoutId={String(item)}
-              onClick={() => setSelectedId(String(item))}
-            >
-              <div>
-                This is how a Note on Note.me looks like! Very simple, clean and asthetic! 😍
-              </div>
-              <p>Feb, 10 2022</p>
-            </Note>
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            measuring={{
+              droppable: { strategy: MeasuringStrategy.Always }
+            }}
+          >
+            <SortableContext items={items} strategy={rectSortingStrategy}>
+              {items.map((item) => (
+                <SortableItem key={item.id} id={item.id} text={item.text}>
+                  <div>{item.text}</div>
+                  <p>Feb, 10 2022</p>
+                </SortableItem>
+              ))}
+            </SortableContext>
+            <DragOverlay>
+              {activeId ? (
+                <Note id={activeId} className="dragOverlay">
+                  <div>{selectedText}</div>
+                  <p>Feb, 10 2022</p>
+                </Note>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
         </NotesGrid>
       </NotesContent>
-      <div
-        onClick={closePopup}
-        onKeyPress={() => {}}
-        role="button"
-        tabIndex={0}
-        className={`${selectedId ? 'visible' : ''} notePopupOverlay`}
-      >
-        <AnimatePresence>
-          {selectedId && (
-            <NotePopup as={motion.div} layoutId={selectedId}>
-              <div className="content">
-                <textarea
-                  ref={notePopupRef}
-                  defaultValue="This is how a Note on Note.me looks like! Very simple, clean and asthetic! 😍"
-                />
-              </div>
-            </NotePopup>
-          )}
-        </AnimatePresence>
-      </div>
     </NotesWrapper>
   );
 };
