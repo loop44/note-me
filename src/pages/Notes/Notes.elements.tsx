@@ -2,6 +2,25 @@ import styled from 'styled-components';
 
 export const NotesWrapper = styled.div`
   height: 100%;
+
+  .back {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    &.visible {
+      background: rgba(0, 0, 0, 0.6);
+      pointer-events: all;
+      z-index: 1;
+    }
+  }
 `;
 
 export const Sidebar = styled.div`
@@ -82,14 +101,14 @@ export const NotesGrid = styled.div`
 export const Note = styled.div`
   padding: 25px 25px 21px 25px;
   height: 240px;
-  background: rgba(151, 210, 188, 0.4);
+  background: rgba(151, 210, 188);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 60px;
+  width: 264px;
 
   div {
-    position: relative;
     flex-grow: 1;
     font-weight: 500;
     font-size: 20px;
@@ -110,5 +129,29 @@ export const Note = styled.div`
     line-height: 17px;
     color: #3c3d43;
     opacity: 0.8;
+  }
+`;
+
+export const NotePopup = styled.div`
+  .content {
+    width: 564px;
+    margin: 0 auto;
+    padding: 40px;
+    height: 540px;
+    background: rgba(151, 210, 188);
+    border-radius: 10px;
+  }
+
+  textarea {
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    resize: none;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+    color: #3c3d43;
   }
 `;
