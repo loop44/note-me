@@ -3,20 +3,21 @@ import styled from 'styled-components';
 export const NotesWrapper = styled.div`
   height: 100%;
 
-  .back {
+  .notePopupOverlay {
     position: fixed;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    transition: background-color 0.3s ease-in-out;
 
     &.visible {
-      background: rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, 0.6);
       pointer-events: all;
       z-index: 1;
     }

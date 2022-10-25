@@ -72,7 +72,7 @@ const Notes = () => {
         onKeyPress={() => {}}
         role="button"
         tabIndex={0}
-        className={`${selectedId ? 'visible' : ''} back`}
+        className={`${selectedId ? 'visible' : ''} notePopupOverlay`}
       >
         <AnimatePresence>
           {selectedId && (
