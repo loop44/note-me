@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { v4 } from 'uuid';
 
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   closestCenter,
   DndContext,
   DragOverlay,
-  KeyboardSensor,
   MeasuringStrategy,
   PointerSensor,
   useSensor,
   useSensors
 } from '@dnd-kit/core';
-import {
-  arrayMove,
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates
-} from '@dnd-kit/sortable';
+import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 
 import DarkModeSvg from '../../assets/icons/dark-mode.svg';
 import LogOutSvg from '../../assets/icons/log-out.svg';
@@ -35,47 +30,67 @@ import {
 } from './Notes.elements';
 import SortableItem from './SortableItem';
 
-const Notes = () => {
+interface NoteProps {
+  logOut: () => void;
+}
+
+const Notes: React.FC<NoteProps> = ({ logOut }) => {
   const [items, setItems] = useState([
     {
-      id: 1,
+      id: '1',
       text: 'one'
     },
     {
-      id: 2,
+      id: '2',
       text: 'two'
     },
     {
-      id: 3,
+      id: '3',
       text: 'three'
     },
     {
-      id: 4,
+      id: '4',
       text: 'four'
     },
     {
-      id: 5,
+      id: '5',
       text: 'five'
     },
     {
-      id: 6,
+      id: '6',
       text: 'six'
     },
     {
-      id: 7,
+      id: '7',
       text: 'seven'
     },
     {
-      id: 8,
+      id: '8',
       text: 'eight'
     },
     {
-      id: 9,
+      id: '9',
       text: 'nine'
     }
   ]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string>('');
+
+  const addItem = () => {
+    setItems([{ id: v4(), text: '' }, ...items]);
+  };
+
+  const changeNote = (value: string, id: string) => {
+    const newItems = items.map((item) => {
+      if (item.id === id) {
+        item.text = value;
+      }
+
+      return item;
+    });
+
+    setItems(newItems);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -83,9 +98,6 @@ const Notes = () => {
         delay: 250,
         tolerance: 5
       }
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
     })
   );
 
@@ -111,8 +123,8 @@ const Notes = () => {
     if (active.id !== over.id) {
       setItems((notes) => {
         const indexes = notes.map((n) => n.id);
-        const oldIndex = indexes.indexOf(Number(active.id));
-        const newIndex = indexes.indexOf(Number(over.id));
+        const oldIndex = indexes.indexOf(String(active.id));
+        const newIndex = indexes.indexOf(String(over.id));
         return arrayMove(notes, oldIndex, newIndex);
       });
     }
@@ -125,8 +137,8 @@ const Notes = () => {
     <NotesWrapper>
       <Sidebar>
         <img src={LogoSvg} width={48} alt="" />
-        <img src={PlusSvg} width={32} alt="" />
-        <img src={LogOutSvg} width={32} alt="" />
+        <input type="image" width={32} src={PlusSvg} alt="" onClick={addItem} />
+        <input type="image" width={32} src={LogOutSvg} alt="" onClick={logOut} />
       </Sidebar>
       <NotesContent>
         <ContentHeader>
@@ -155,8 +167,12 @@ const Notes = () => {
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
               {items.map((item) => (
-                <SortableItem key={item.id} id={item.id} text={item.text}>
-                  <div>{item.text}</div>
+                <SortableItem key={item.id} id={item.id} changeNote={changeNote} text={item.text}>
+                  {item.text ? (
+                    <div>{item.text}</div>
+                  ) : (
+                    <div className="placeholder">Type your note here</div>
+                  )}
                   <p>Feb, 10 2022</p>
                 </SortableItem>
               ))}
@@ -164,7 +180,11 @@ const Notes = () => {
             <DragOverlay>
               {activeId ? (
                 <Note id={activeId} className="dragOverlay">
-                  <div>{selectedText}</div>
+                  {selectedText ? (
+                    <div>{selectedText}</div>
+                  ) : (
+                    <div className="placeholder">Type your note here</div>
+                  )}
                   <p>Feb, 10 2022</p>
                 </Note>
               ) : null}

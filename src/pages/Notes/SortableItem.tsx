@@ -29,6 +29,7 @@ const SortableItem = ({ ...props }) => {
   const closePopup = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target !== notePopupRef.current) {
       setOpened(false);
+      props.changeNote(notePopupRef.current?.value, notePopupRef.current?.id);
     }
   };
 
@@ -55,7 +56,12 @@ const SortableItem = ({ ...props }) => {
           {opened && (
             <NotePopup as={motion.div} layoutId={String(animateToken)}>
               <div className="content">
-                <textarea ref={notePopupRef} defaultValue={props.text} />
+                <textarea
+                  ref={notePopupRef}
+                  defaultValue={props.text}
+                  id={props.id}
+                  placeholder="Type your note here"
+                />
               </div>
             </NotePopup>
           )}

@@ -83,11 +83,16 @@ const App = () => {
     checkAuth();
   }, []);
 
+  const logOut = () => {
+    localStorage.removeItem('note-me-token');
+    setIsAuth(false);
+  };
+
   return (
     <>
       <GlobalStyle />
       {isAuth ? (
-        <Notes />
+        <Notes logOut={logOut} />
       ) : (
         <Autorization
           fetchLogin={fetchLogin}

@@ -128,6 +128,10 @@ export const Note = styled.div`
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    &.placeholder {
+      color: #757575;
+    }
   }
 
   p {
@@ -161,5 +165,9 @@ export const NotePopup = styled.div`
     font-size: 20px;
     line-height: 30px;
     color: #3c3d43;
+
+    &::placeholder {
+      color: #757575;
+    }
   }
 `;
