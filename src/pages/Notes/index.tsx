@@ -28,7 +28,7 @@ import {
   NotesWrapper,
   Sidebar
 } from './Notes.elements';
-import SortableItem from './SortableItem';
+import SortableNote from './SortableNote';
 
 interface NoteProps {
   logOut: () => void;
@@ -167,14 +167,14 @@ const Notes: React.FC<NoteProps> = ({ logOut }) => {
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
               {items.map((item) => (
-                <SortableItem key={item.id} id={item.id} changeNote={changeNote} text={item.text}>
+                <SortableNote key={item.id} id={item.id} changeNote={changeNote} text={item.text}>
                   {item.text ? (
                     <div>{item.text}</div>
                   ) : (
                     <div className="placeholder">Type your note here</div>
                   )}
                   <p>Feb, 10 2022</p>
-                </SortableItem>
+                </SortableNote>
               ))}
             </SortableContext>
             <DragOverlay>

@@ -144,7 +144,7 @@ export const Note = styled.div`
   }
 `;
 
-export const NotePopup = styled.div`
+export const NotePopupElement = styled.div`
   .content {
     width: 564px;
     margin: 0 auto;
