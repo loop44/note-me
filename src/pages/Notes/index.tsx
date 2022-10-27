@@ -34,9 +34,10 @@ import Trash from './Trash';
 
 interface NoteProps {
   logOut: () => void;
+  name: string;
 }
 
-const Notes: React.FC<NoteProps> = ({ logOut }) => {
+const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
   const [items, setItems] = useState([
     {
       id: '1',
@@ -164,8 +165,14 @@ const Notes: React.FC<NoteProps> = ({ logOut }) => {
         </ContentHeader>
         <Greeting>
           <h1>
-            Hello, <span>Loop</span>
-            <span>!</span> 👋🏼
+            Hello
+            {name && (
+              <>
+                <span>,</span> <span className="bold">{name}</span>
+              </>
+            )}
+            <span className="bold">!</span>
+            👋🏼
           </h1>
           <p>All your notes are here, in one place!</p>
         </Greeting>

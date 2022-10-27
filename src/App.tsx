@@ -28,6 +28,7 @@ const GlobalStyle = createGlobalStyle`
 
 const App = () => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [name, setName] = useState<string>('');
   const [error, setError] = useState<null | string>(null);
 
   const fetchLogin = async (params: AuthParams) => {
@@ -37,6 +38,7 @@ const App = () => {
       if (data.token) {
         window.localStorage.setItem('note-me-token', data.token);
         setIsAuth(true);
+        setName(data.username);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -53,6 +55,7 @@ const App = () => {
       if (data.token) {
         window.localStorage.setItem('note-me-token', data.token);
         setIsAuth(true);
+        setName(data.username);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -75,8 +78,9 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const auth = await fetchAuthMe();
-      if (auth) {
+      if (auth.status) {
         setIsAuth(true);
+        setName(auth.username);
       }
     };
 
@@ -92,7 +96,7 @@ const App = () => {
     <>
       <GlobalStyle />
       {isAuth ? (
-        <Notes logOut={logOut} />
+        <Notes logOut={logOut} name={name} />
       ) : (
         <Autorization
           fetchLogin={fetchLogin}

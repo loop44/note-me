@@ -81,7 +81,7 @@ export const Greeting = styled.div`
     line-height: 2.313rem;
     margin-bottom: 0.438rem;
 
-    span {
+    span.bold {
       font-weight: 700;
     }
   }
