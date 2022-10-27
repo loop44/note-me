@@ -106,8 +106,7 @@ const Autorization: React.FC<AutorazationProps> = ({
           >
             <div>
               <span>{error}</span>
-              {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-              <img onClick={closeError} onKeyDown={closeError} src={closeSvg} alt="" />
+              <input type="image" src={closeSvg} alt="" onClick={closeError} />
             </div>
           </Error>
         )}

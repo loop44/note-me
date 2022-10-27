@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 
 import {
@@ -14,11 +15,14 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 
+import axiosInctance from '../../api/axios';
+import closeSvg from '../../assets/icons/close.svg';
 import DarkModeSvg from '../../assets/icons/dark-mode.svg';
 import LogOutSvg from '../../assets/icons/log-out.svg';
 import PlusSvg from '../../assets/icons/plus.svg';
 import SearchSvg from '../../assets/icons/search.svg';
 import LogoSvg from '../../assets/images/logo-icon.svg';
+import { Error } from '../Autorization/Autorization.elements';
 
 import {
   ContentHeader,
@@ -37,56 +41,97 @@ interface NoteProps {
   name: string;
 }
 
+type NoteType = {
+  id: string;
+  content: string;
+  index: number;
+  date: string;
+};
+
 const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
-  const [items, setItems] = useState([
-    {
-      id: '1',
-      text: 'one'
-    },
-    {
-      id: '2',
-      text: 'two'
-    },
-    {
-      id: '3',
-      text: 'three'
-    },
-    {
-      id: '4',
-      text: 'four'
-    },
-    {
-      id: '5',
-      text: 'five'
-    },
-    {
-      id: '6',
-      text: 'six'
-    },
-    {
-      id: '7',
-      text: 'seven'
-    },
-    {
-      id: '8',
-      text: 'eight'
-    },
-    {
-      id: '9',
-      text: 'nine'
-    }
-  ]);
+  const [items, setItems] = useState<NoteType[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [error, setError] = useState<null | string>(null);
+
+  // server requests
+  const createNote = async (id: string, index: number, date: string) => {
+    try {
+      await axiosInctance.post('/api/notes', {
+        id,
+        content: '',
+        index,
+        date
+      });
+    } catch {
+      setError('An error occurred. Please try again later :(');
+    }
+  };
+
+  const getNotes = async () => {
+    try {
+      const res = await axiosInctance.get('api/notes');
+
+      const orderNotes = res.data.sort((a: NoteType, b: NoteType) => b.index - a.index);
+      setItems(orderNotes);
+    } catch {
+      setError('An error occurred. Please try again later :(');
+    }
+  };
+
+  const updateNote = async (id: string, content: string) => {
+    try {
+      await axiosInctance.put(`/api/notes/${id}`, {
+        content
+      });
+    } catch {
+      setError('An error occurred. Please try again later :(');
+    }
+  };
+
+  const deleteNote = async (id: string) => {
+    try {
+      await axiosInctance.delete(`api/notes/${id}`);
+    } catch {
+      setError('An error occurred. Please try again later :(');
+    }
+  };
+
+  const updateIndexes = async (indexes: string[]) => {
+    try {
+      await axiosInctance.put(`api/notes/`, {
+        indexes
+      });
+    } catch {
+      setError('An error occurred. Please try again later :(');
+    }
+  };
+
+  useEffect(() => {
+    getNotes();
+  }, []);
 
   const addItem = () => {
-    setItems([{ id: v4(), text: '' }, ...items]);
+    const id = v4();
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    };
+    const date = new Date().toLocaleDateString('en-US', options);
+    setItems([{ id, content: '', index: items.length, date }, ...items]);
+    createNote(id, items.length, date);
   };
 
   const changeNote = (value: string, id: string) => {
     const newItems = items.map((item) => {
       if (item.id === id) {
-        item.text = value;
+        if (item.content !== value) {
+          updateNote(item.id, value);
+        }
+        item.content = value;
       }
 
       return item;
@@ -111,7 +156,8 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
 
     items.forEach((item) => {
       if (item.id === active.id) {
-        setSelectedText(item.text);
+        setSelectedText(item.content);
+        setSelectedDate(item.date);
       }
     });
   };
@@ -128,13 +174,18 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
         const indexes = notes.map((n) => n.id);
         const oldIndex = indexes.indexOf(String(active.id));
         const newIndex = indexes.indexOf(String(over.id));
-        return arrayMove(notes, oldIndex, newIndex);
+        const newNotes = arrayMove(notes, oldIndex, newIndex);
+        const newIndexes = newNotes.map((n) => n.id).reverse();
+
+        updateIndexes(newIndexes);
+        return newNotes;
       });
     }
 
     if (over.id === 'trash') {
       const newItems = items.filter((item) => {
         if (item.id === active.id) {
+          deleteNote(item.id);
           return false;
         }
 
@@ -188,32 +239,60 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
               {items.map((item) => (
-                <SortableNote key={item.id} id={item.id} changeNote={changeNote} text={item.text}>
-                  {item.text ? (
-                    <div>{item.text}</div>
+                <SortableNote
+                  key={item.id}
+                  id={item.id}
+                  changeNote={changeNote}
+                  text={item.content}
+                >
+                  {item.content ? (
+                    <div>{item.content}</div>
                   ) : (
                     <div className="placeholder">Type your note here</div>
                   )}
-                  <p>Feb, 10 2022</p>
+                  <p>{item.date}</p>
                 </SortableNote>
               ))}
             </SortableContext>
             <Trash id="trash" activeId={activeId} />
             <DragOverlay>
-              {activeId ? (
-                <Note id={activeId} className="dragOverlay">
-                  {selectedText ? (
-                    <div>{selectedText}</div>
-                  ) : (
-                    <div className="placeholder">Type your note here</div>
-                  )}
-                  <p>Feb, 10 2022</p>
-                </Note>
-              ) : null}
+              <AnimatePresence>
+                {activeId ? (
+                  <Note
+                    id={activeId}
+                    as={motion.div}
+                    className="dragOverlay"
+                    animate={{ boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.3)' }}
+                    exit={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0.3)' }}
+                  >
+                    {selectedText ? (
+                      <div>{selectedText}</div>
+                    ) : (
+                      <div className="placeholder">Type your note here</div>
+                    )}
+                    <p>{selectedDate}</p>
+                  </Note>
+                ) : null}
+              </AnimatePresence>
             </DragOverlay>
           </DndContext>
         </NotesGrid>
       </NotesContent>
+      <AnimatePresence mode="wait">
+        {error && (
+          <Error
+            as={motion.div}
+            initial={{ y: '-5rem' }}
+            animate={{ y: '1.563rem' }}
+            exit={{ y: '-5rem' }}
+          >
+            <div>
+              <span>{error}</span>
+              <input type="image" src={closeSvg} alt="" onClick={() => setError(null)} />
+            </div>
+          </Error>
+        )}
+      </AnimatePresence>
     </NotesWrapper>
   );
 };

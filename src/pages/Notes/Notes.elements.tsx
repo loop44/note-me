@@ -108,11 +108,9 @@ export const Note = styled.div`
   flex-direction: column;
   gap: 60px;
   width: 264px;
-  transition: box-shadow 0.3s ease-in-out;
   position: relative;
 
   &.dragOverlay {
-    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
     cursor: grabbing;
   }
 
