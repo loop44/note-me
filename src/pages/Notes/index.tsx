@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   closestCenter,
   DndContext,
+  DragEndEvent,
   DragOverlay,
+  DragStartEvent,
   MeasuringStrategy,
   PointerSensor,
   useSensor,
@@ -29,6 +30,7 @@ import {
   Sidebar
 } from './Notes.elements';
 import SortableNote from './SortableNote';
+import Trash from './Trash';
 
 interface NoteProps {
   logOut: () => void;
@@ -129,6 +131,18 @@ const Notes: React.FC<NoteProps> = ({ logOut }) => {
       });
     }
 
+    if (over.id === 'trash') {
+      const newItems = items.filter((item) => {
+        if (item.id === active.id) {
+          return false;
+        }
+
+        return true;
+      });
+
+      setItems(newItems);
+    }
+
     setActiveId(null);
     setSelectedText('');
   };
@@ -177,6 +191,7 @@ const Notes: React.FC<NoteProps> = ({ logOut }) => {
                 </SortableNote>
               ))}
             </SortableContext>
+            <Trash id="trash" activeId={activeId} />
             <DragOverlay>
               {activeId ? (
                 <Note id={activeId} className="dragOverlay">

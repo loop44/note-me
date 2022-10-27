@@ -39,7 +39,7 @@ export const Sidebar = styled.div`
 `;
 
 export const NotesContent = styled.div`
-  padding: 2.5rem 7rem 2.5rem 14rem;
+  padding: 2.5rem 12rem 2.5rem 14rem;
 `;
 
 export const ContentHeader = styled.div`
@@ -131,6 +131,7 @@ export const Note = styled.div`
 
     &.placeholder {
       color: #757575;
+      user-select: none;
     }
   }
 
@@ -169,5 +170,26 @@ export const NotePopupElement = styled.div`
     &::placeholder {
       color: #757575;
     }
+  }
+`;
+
+export const DeleteBlock = styled.div`
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 180px;
+  padding: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.active {
+    background: rgb(9, 9, 121);
+    background: linear-gradient(
+      90deg,
+      rgba(9, 9, 121, 0) 0%,
+      rgba(255, 0, 0, 0.06206232492997199) 100%
+    );
   }
 `;
