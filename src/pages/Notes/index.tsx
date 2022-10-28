@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { ThemeProvider } from 'styled-components';
 import { v4 } from 'uuid';
 
 import {
@@ -18,10 +19,14 @@ import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortab
 import axiosInctance from '../../api/axios';
 import closeSvg from '../../assets/icons/close.svg';
 import DarkModeSvg from '../../assets/icons/dark-mode.svg';
+import LightModeSvg from '../../assets/icons/light-mode.svg';
 import LogOutSvg from '../../assets/icons/log-out.svg';
+import LogOutSvgDark from '../../assets/icons/log-out-dark.svg';
 import PlusSvg from '../../assets/icons/plus.svg';
+import PlusSvgDark from '../../assets/icons/plus-dark.svg';
 import SearchSvg from '../../assets/icons/search.svg';
 import LogoSvg from '../../assets/images/logo-icon.svg';
+import LogoSvgDark from '../../assets/images/logo-icon-dark.svg';
 import { Error } from '../Autorization/Autorization.elements';
 
 import {
@@ -51,6 +56,7 @@ type NoteType = {
 };
 
 const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
+  const [darkTheme, setDarkTheme] = useState<boolean>(false);
   const [items, setItems] = useState<NoteType[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string>('');
@@ -58,6 +64,15 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState<null | string>(null);
+
+  const theme = {
+    main: darkTheme ? 'dark' : 'light'
+  };
+
+  const changeTheme = () => {
+    setDarkTheme(!darkTheme);
+    localStorage.setItem('darkTheme', String(!darkTheme));
+  };
 
   // server requests
   const createNote = async (id: string, index: number, date: string, color: string) => {
@@ -116,6 +131,10 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
   useEffect(() => {
     if (!isAnonymous) {
       getNotes();
+    }
+    const darkThemeLocalStorage = localStorage.getItem('darkTheme');
+    if (darkThemeLocalStorage) {
+      setDarkTheme(darkThemeLocalStorage === 'true');
     }
   }, []);
 
@@ -226,106 +245,122 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
   });
 
   return (
-    <NotesWrapper>
-      <Sidebar>
-        <img src={LogoSvg} width={48} alt="" />
-        <input type="image" width={32} src={PlusSvg} alt="" onClick={addItem} />
-        <input type="image" width={32} src={LogOutSvg} alt="" onClick={logOut} />
-      </Sidebar>
-      <NotesContent>
-        <ContentHeader>
-          <div className="input">
-            <img src={SearchSvg} alt="" />
-            <input
-              type="text"
-              placeholder="Search Notes"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
-            />
-          </div>
-          <img src={DarkModeSvg} alt="" />
-        </ContentHeader>
-        <Greeting>
-          <h1>
-            Hello
-            {name && (
-              <>
-                <span>,</span> <span className="bold">{name}</span>
-              </>
-            )}
-            <span className="bold">!</span>
-            👋🏼
-          </h1>
-          <p>All your notes are here, in one place!</p>
-        </Greeting>
-        <NotesGrid>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            measuring={{
-              droppable: { strategy: MeasuringStrategy.Always }
-            }}
-          >
-            <SortableContext items={filteredItems} strategy={rectSortingStrategy}>
-              {filteredItems.map((item) => (
-                <SortableNote
-                  key={item.id}
-                  id={item.id}
-                  changeNote={changeNote}
-                  text={item.content}
-                  style={{
-                    backgroundColor: item.color
-                  }}
-                >
-                  {item.content ? (
-                    <div>{item.content}</div>
-                  ) : (
-                    <div className="placeholder">Type your note here</div>
-                  )}
-                  <p>{item.date}</p>
-                </SortableNote>
-              ))}
-            </SortableContext>
-            <Trash id="trash" activeId={activeId} />
-            <DragOverlay>
-              {activeId ? (
-                <Note
-                  id={activeId}
-                  as={motion.div}
-                  className="dragOverlay"
-                  style={{
-                    backgroundColor: selectedColor
-                  }}
-                >
-                  {selectedText ? (
-                    <div>{selectedText}</div>
-                  ) : (
-                    <div className="placeholder">Type your note here</div>
-                  )}
-                  <p>{selectedDate}</p>
-                </Note>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
-        </NotesGrid>
-      </NotesContent>
-      <AnimatePresence mode="wait">
-        {error && (
-          <Error
-            as={motion.div}
-            initial={{ y: '-5rem' }}
-            animate={{ y: '1.563rem' }}
-            exit={{ y: '-5rem' }}
-          >
-            <div>
-              <span>{error}</span>
-              <input type="image" src={closeSvg} alt="" onClick={() => setError(null)} />
+    <ThemeProvider theme={theme}>
+      <NotesWrapper>
+        <Sidebar>
+          {darkTheme ? (
+            <>
+              <img src={LogoSvgDark} width={48} alt="" />
+              <input type="image" width={32} src={PlusSvgDark} alt="" onClick={addItem} />
+              <input type="image" width={32} src={LogOutSvgDark} alt="" onClick={logOut} />
+            </>
+          ) : (
+            <>
+              <img src={LogoSvg} width={48} alt="" />
+              <input type="image" width={32} src={PlusSvg} alt="" onClick={addItem} />
+              <input type="image" width={32} src={LogOutSvg} alt="" onClick={logOut} />
+            </>
+          )}
+        </Sidebar>
+        <NotesContent>
+          <ContentHeader>
+            <div className="input">
+              <img src={SearchSvg} alt="" />
+              <input
+                type="text"
+                placeholder="Search Notes"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
+              />
             </div>
-          </Error>
-        )}
-      </AnimatePresence>
-    </NotesWrapper>
+            {darkTheme ? (
+              <input type="image" src={LightModeSvg} alt="" onClick={changeTheme} />
+            ) : (
+              <input type="image" src={DarkModeSvg} alt="" onClick={changeTheme} />
+            )}
+          </ContentHeader>
+          <Greeting>
+            <h1>
+              Hello
+              {name && (
+                <>
+                  <span>,</span> <span className="bold">{name}</span>
+                </>
+              )}
+              <span className="bold">!</span>
+              👋🏼
+            </h1>
+            <p>All your notes are here, in one place!</p>
+          </Greeting>
+          <NotesGrid>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              measuring={{
+                droppable: { strategy: MeasuringStrategy.Always }
+              }}
+            >
+              <SortableContext items={filteredItems} strategy={rectSortingStrategy}>
+                {filteredItems.map((item) => (
+                  <SortableNote
+                    key={item.id}
+                    id={item.id}
+                    changeNote={changeNote}
+                    text={item.content}
+                    style={{
+                      backgroundColor: item.color
+                    }}
+                  >
+                    {item.content ? (
+                      <div>{item.content}</div>
+                    ) : (
+                      <div className="placeholder">Type your note here</div>
+                    )}
+                    <p>{item.date}</p>
+                  </SortableNote>
+                ))}
+              </SortableContext>
+              <Trash id="trash" activeId={activeId} />
+              <DragOverlay>
+                {activeId ? (
+                  <Note
+                    id={activeId}
+                    as={motion.div}
+                    className="dragOverlay"
+                    style={{
+                      backgroundColor: selectedColor
+                    }}
+                  >
+                    {selectedText ? (
+                      <div>{selectedText}</div>
+                    ) : (
+                      <div className="placeholder">Type your note here</div>
+                    )}
+                    <p>{selectedDate}</p>
+                  </Note>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          </NotesGrid>
+        </NotesContent>
+        <AnimatePresence mode="wait">
+          {error && (
+            <Error
+              as={motion.div}
+              initial={{ y: '-5rem' }}
+              animate={{ y: '1.563rem' }}
+              exit={{ y: '-5rem' }}
+            >
+              <div>
+                <span>{error}</span>
+                <input type="image" src={closeSvg} alt="" onClick={() => setError(null)} />
+              </div>
+            </Error>
+          )}
+        </AnimatePresence>
+      </NotesWrapper>
+    </ThemeProvider>
   );
 };
 

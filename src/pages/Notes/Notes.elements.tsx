@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 export const NotesWrapper = styled.div`
   height: 100%;
+  transition: background-color 0.3s ease-in-out;
+  background-color: ${(props) => (props.theme.main === 'dark' ? '#343539' : '#fff')};
 
   .notePopupOverlay {
     position: fixed;
@@ -29,13 +31,15 @@ export const Sidebar = styled.div`
   left: 0;
   top: 0;
   height: 100vh;
-  background-color: #fffdfa;
   box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 30px 32px;
+
+  transition: background-color 0.3s ease-in-out;
+  background-color: ${(props) => (props.theme.main === 'dark' ? '#3C3D43' : '#fffdfa')};
 `;
 
 export const NotesContent = styled.div`
@@ -57,6 +61,10 @@ export const ContentHeader = styled.div`
       outline: none;
       font-size: 1.125rem;
       line-height: 1.313rem;
+      background: transparent;
+
+      transition: color 0.3s ease-in-out;
+      color: ${(props) => (props.theme.main === 'dark' ? '#fff' : '#000')};
 
       &::placeholder {
         color: #808080;
@@ -80,6 +88,8 @@ export const Greeting = styled.div`
     font-size: 2rem;
     line-height: 2.313rem;
     margin-bottom: 0.438rem;
+    transition: color 0.3s ease-in-out;
+    color: ${(props) => (props.theme.main === 'dark' ? '#fff' : '#000')};
 
     span.bold {
       font-weight: 700;
@@ -89,7 +99,8 @@ export const Greeting = styled.div`
   p {
     font-size: 1.25rem;
     line-height: 1.438rem;
-    color: #4d4d4d;
+    transition: color 0.3s ease-in-out;
+    color: ${(props) => (props.theme.main === 'dark' ? '#A8A8B3' : '#4d4d4d')};
   }
 `;
 
