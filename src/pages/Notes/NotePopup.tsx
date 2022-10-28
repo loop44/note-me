@@ -9,9 +9,19 @@ interface NotePopupProps {
   text: string;
   id: string;
   notePopupRef: React.RefObject<HTMLTextAreaElement>;
+  style: {
+    backgroundColor: string;
+  };
 }
 
-const NotePopup: React.FC<NotePopupProps> = ({ closePopup, opened, text, id, notePopupRef }) => {
+const NotePopup: React.FC<NotePopupProps> = ({
+  closePopup,
+  opened,
+  text,
+  id,
+  notePopupRef,
+  style
+}) => {
   useEffect(() => {
     if (opened) {
       document.body.style.overflow = 'hidden';
@@ -32,6 +42,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ closePopup, opened, text, id, not
       <AnimatePresence>
         {opened && (
           <NotePopupElement
+            style={style}
             key="modal"
             as={motion.div}
             initial={{ opacity: 0 }}

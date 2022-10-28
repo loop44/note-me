@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 
 import {
@@ -46,6 +46,7 @@ type NoteType = {
   content: string;
   index: number;
   date: string;
+  color: string;
 };
 
 const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
@@ -53,16 +54,19 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState<null | string>(null);
 
   // server requests
-  const createNote = async (id: string, index: number, date: string) => {
+  const createNote = async (id: string, index: number, date: string, color: string) => {
     try {
       await axiosInctance.post('/api/notes', {
         id,
         content: '',
         index,
-        date
+        date,
+        color
       });
     } catch {
       setError('An error occurred. Please try again later :(');
@@ -121,8 +125,11 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
       day: 'numeric'
     };
     const date = new Date().toLocaleDateString('en-US', options);
-    setItems([{ id, content: '', index: items.length, date }, ...items]);
-    createNote(id, items.length, date);
+
+    const colors = ['#FDF6D2', '#D5ECE1', '#E2DBEA', '#D4D4D4', '#FFC8C3'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    setItems([{ id, content: '', index: items.length, date, color }, ...items]);
+    createNote(id, items.length, date, color);
   };
 
   const changeNote = (value: string, id: string) => {
@@ -158,6 +165,7 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
       if (item.id === active.id) {
         setSelectedText(item.content);
         setSelectedDate(item.date);
+        setSelectedColor(item.color);
       }
     });
   };
@@ -199,6 +207,13 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
     setSelectedText('');
   };
 
+  const filteredItems = items.filter((obj) => {
+    if (obj.content.toLowerCase().includes(searchValue.toLowerCase())) {
+      return true;
+    }
+    return false;
+  });
+
   return (
     <NotesWrapper>
       <Sidebar>
@@ -210,7 +225,11 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
         <ContentHeader>
           <div className="input">
             <img src={SearchSvg} alt="" />
-            <input type="text" placeholder="Search Notes" />
+            <input
+              type="text"
+              placeholder="Search Notes"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
+            />
           </div>
           <img src={DarkModeSvg} alt="" />
         </ContentHeader>
@@ -237,13 +256,16 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
               droppable: { strategy: MeasuringStrategy.Always }
             }}
           >
-            <SortableContext items={items} strategy={rectSortingStrategy}>
-              {items.map((item) => (
+            <SortableContext items={filteredItems} strategy={rectSortingStrategy}>
+              {filteredItems.map((item) => (
                 <SortableNote
                   key={item.id}
                   id={item.id}
                   changeNote={changeNote}
                   text={item.content}
+                  style={{
+                    backgroundColor: item.color
+                  }}
                 >
                   {item.content ? (
                     <div>{item.content}</div>
@@ -256,24 +278,23 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
             </SortableContext>
             <Trash id="trash" activeId={activeId} />
             <DragOverlay>
-              <AnimatePresence>
-                {activeId ? (
-                  <Note
-                    id={activeId}
-                    as={motion.div}
-                    className="dragOverlay"
-                    animate={{ boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.3)' }}
-                    exit={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0.3)' }}
-                  >
-                    {selectedText ? (
-                      <div>{selectedText}</div>
-                    ) : (
-                      <div className="placeholder">Type your note here</div>
-                    )}
-                    <p>{selectedDate}</p>
-                  </Note>
-                ) : null}
-              </AnimatePresence>
+              {activeId ? (
+                <Note
+                  id={activeId}
+                  as={motion.div}
+                  className="dragOverlay"
+                  style={{
+                    backgroundColor: selectedColor
+                  }}
+                >
+                  {selectedText ? (
+                    <div>{selectedText}</div>
+                  ) : (
+                    <div className="placeholder">Type your note here</div>
+                  )}
+                  <p>{selectedDate}</p>
+                </Note>
+              ) : null}
             </DragOverlay>
           </DndContext>
         </NotesGrid>

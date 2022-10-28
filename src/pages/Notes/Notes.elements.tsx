@@ -111,6 +111,7 @@ export const Note = styled.div`
   position: relative;
 
   &.dragOverlay {
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
     cursor: grabbing;
   }
 
@@ -149,7 +150,6 @@ export const NotePopupElement = styled.div`
     margin: 0 auto;
     padding: 40px;
     height: 540px;
-    background: rgba(151, 210, 188);
     border-radius: 10px;
   }
 

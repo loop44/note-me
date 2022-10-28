@@ -40,6 +40,7 @@ const SortableNote = ({ ...props }) => {
           layoutId={String(props.id)}
           onClick={() => setOpened(true)}
           animate={opened ? { opacity: 0 } : { opacity: 1 }}
+          style={props.style}
         >
           {props.children}
         </Note>
@@ -50,6 +51,7 @@ const SortableNote = ({ ...props }) => {
         text={props.text}
         id={props.id}
         notePopupRef={notePopupRef}
+        style={props.style}
       />
     </>
   );
