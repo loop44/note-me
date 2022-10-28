@@ -39,6 +39,7 @@ const App = () => {
       if (data.token) {
         window.localStorage.setItem('note-me-token', data.token);
         setIsAuth(true);
+        setIsAnonymous(false);
         setName(data.username);
       }
     } catch (err) {
@@ -56,6 +57,7 @@ const App = () => {
       if (data.token) {
         window.localStorage.setItem('note-me-token', data.token);
         setIsAuth(true);
+        setIsAnonymous(false);
         setName(data.username);
       }
     } catch (err) {
@@ -86,6 +88,7 @@ const App = () => {
       const auth = await fetchAuthMe();
       if (auth.status) {
         setIsAuth(true);
+        setIsAnonymous(false);
         setName(auth.username);
       }
     };
