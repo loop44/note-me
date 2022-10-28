@@ -39,6 +39,7 @@ import Trash from './Trash';
 interface NoteProps {
   logOut: () => void;
   name: string;
+  isAnonymous: boolean;
 }
 
 type NoteType = {
@@ -49,7 +50,7 @@ type NoteType = {
   color: string;
 };
 
-const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
+const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
   const [items, setItems] = useState<NoteType[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState<string>('');
@@ -113,7 +114,9 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
   };
 
   useEffect(() => {
-    getNotes();
+    if (!isAnonymous) {
+      getNotes();
+    }
   }, []);
 
   const addItem = () => {
@@ -129,14 +132,18 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
     const colors = ['#FDF6D2', '#D5ECE1', '#E2DBEA', '#D4D4D4', '#FFC8C3'];
     const color = colors[Math.floor(Math.random() * colors.length)];
     setItems([{ id, content: '', index: items.length, date, color }, ...items]);
-    createNote(id, items.length, date, color);
+    if (!isAnonymous) {
+      createNote(id, items.length, date, color);
+    }
   };
 
   const changeNote = (value: string, id: string) => {
     const newItems = items.map((item) => {
       if (item.id === id) {
         if (item.content !== value) {
-          updateNote(item.id, value);
+          if (!isAnonymous) {
+            updateNote(item.id, value);
+          }
         }
         item.content = value;
       }
@@ -185,7 +192,9 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
         const newNotes = arrayMove(notes, oldIndex, newIndex);
         const newIndexes = newNotes.map((n) => n.id).reverse();
 
-        updateIndexes(newIndexes);
+        if (!isAnonymous) {
+          updateIndexes(newIndexes);
+        }
         return newNotes;
       });
     }
@@ -193,7 +202,9 @@ const Notes: React.FC<NoteProps> = ({ logOut, name }) => {
     if (over.id === 'trash') {
       const newItems = items.filter((item) => {
         if (item.id === active.id) {
-          deleteNote(item.id);
+          if (!isAnonymous) {
+            deleteNote(item.id);
+          }
           return false;
         }
 

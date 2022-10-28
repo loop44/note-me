@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   FieldErrorsImpl,
   SubmitHandler,
@@ -26,6 +27,7 @@ interface LoginProps {
   register: UseFormRegister<Inputs>;
   onLoginSubmit: (data: Inputs) => SubmitHandler<Inputs>;
   changeFormLayout: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  joinAnonymously: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({
@@ -33,7 +35,8 @@ const Login: React.FC<LoginProps> = ({
   handleSubmit,
   register,
   onLoginSubmit,
-  changeFormLayout
+  changeFormLayout,
+  joinAnonymously
 }) => (
   <form onSubmit={handleSubmit(onLoginSubmit)}>
     <img src={LogoSvg} alt="" />
@@ -85,7 +88,13 @@ const Login: React.FC<LoginProps> = ({
       <span className="main">or join anonymously</span>
       <span className="right" />
     </div>
-    <Button name="anonymously">
+    <Button
+      name="anonymously"
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        joinAnonymously();
+      }}
+    >
       <img src={LoginSvg} alt="" />
       <span>Join anonymously</span>
     </Button>

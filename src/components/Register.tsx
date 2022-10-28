@@ -26,6 +26,7 @@ interface RegisterProps {
   register: UseFormRegister<Inputs>;
   onRegisterSubmit: (data: Inputs) => SubmitHandler<Inputs>;
   changeFormLayout: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  joinAnonymously: () => void;
 }
 
 const Register: React.FC<RegisterProps> = ({
@@ -33,7 +34,8 @@ const Register: React.FC<RegisterProps> = ({
   handleSubmit,
   register,
   onRegisterSubmit,
-  changeFormLayout
+  changeFormLayout,
+  joinAnonymously
 }) => (
   <form onSubmit={handleSubmit(onRegisterSubmit)}>
     <img src={LogoSvg} alt="" />
@@ -99,7 +101,13 @@ const Register: React.FC<RegisterProps> = ({
       <span className="main">or join anonymously</span>
       <span className="right" />
     </div>
-    <Button name="anonymously">
+    <Button
+      name="anonymously"
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        joinAnonymously();
+      }}
+    >
       <img src={LoginSvg} alt="" />
       <span>Join anonymously</span>
     </Button>

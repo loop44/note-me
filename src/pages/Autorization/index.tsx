@@ -14,6 +14,7 @@ interface AutorazationProps {
   fetchLogin: (params: AuthParams) => void;
   fetchRegister: (params: AuthParams) => void;
   closeError: () => void;
+  joinAnonymously: () => void;
   error: null | string;
 }
 
@@ -21,7 +22,8 @@ const Autorization: React.FC<AutorazationProps> = ({
   fetchLogin,
   fetchRegister,
   error,
-  closeError
+  closeError,
+  joinAnonymously
 }) => {
   const {
     register,
@@ -83,6 +85,7 @@ const Autorization: React.FC<AutorazationProps> = ({
                 register={register}
                 onLoginSubmit={onLoginSubmit}
                 changeFormLayout={changeFormLayout}
+                joinAnonymously={joinAnonymously}
               />
             ) : (
               <Register
@@ -91,6 +94,7 @@ const Autorization: React.FC<AutorazationProps> = ({
                 register={register}
                 onRegisterSubmit={onRegisterSubmit}
                 changeFormLayout={changeFormLayout}
+                joinAnonymously={joinAnonymously}
               />
             )}
           </motion.div>

@@ -28,6 +28,7 @@ const GlobalStyle = createGlobalStyle`
 
 const App = () => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<null | string>(null);
 
@@ -75,6 +76,11 @@ const App = () => {
     return data;
   };
 
+  const joinAnonymously = () => {
+    setIsAuth(true);
+    setIsAnonymous(true);
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       const auth = await fetchAuthMe();
@@ -96,13 +102,14 @@ const App = () => {
     <>
       <GlobalStyle />
       {isAuth ? (
-        <Notes logOut={logOut} name={name} />
+        <Notes logOut={logOut} name={name} isAnonymous={isAnonymous} />
       ) : (
         <Autorization
           fetchLogin={fetchLogin}
           fetchRegister={fetchRegister}
           error={error}
           closeError={closeError}
+          joinAnonymously={joinAnonymously}
         />
       )}
     </>

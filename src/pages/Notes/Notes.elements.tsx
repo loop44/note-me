@@ -145,12 +145,12 @@ export const Note = styled.div`
 `;
 
 export const NotePopupElement = styled.div`
+  border-radius: 10px;
   .content {
     width: 564px;
     margin: 0 auto;
     padding: 40px;
     height: 540px;
-    border-radius: 10px;
   }
 
   textarea {
