@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { NotePopupElement } from './Notes.elements';
 
@@ -9,6 +9,7 @@ interface NotePopupProps {
   text: string;
   id: string;
   notePopupRef: React.RefObject<HTMLTextAreaElement>;
+  popupOverlayRef: React.RefObject<HTMLDivElement>;
   style: {
     backgroundColor: string;
   };
@@ -20,6 +21,7 @@ const NotePopup: React.FC<NotePopupProps> = ({
   text,
   id,
   notePopupRef,
+  popupOverlayRef,
   style
 }) => {
   useEffect(() => {
@@ -31,6 +33,14 @@ const NotePopup: React.FC<NotePopupProps> = ({
     }
   }, [opened]);
 
+  const [textValue, setTextValue] = useState<string>(text);
+
+  const onChangeTextValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= 1000) {
+      setTextValue(e.target.value);
+    }
+  };
+
   return (
     <div
       onClick={closePopup}
@@ -38,6 +48,7 @@ const NotePopup: React.FC<NotePopupProps> = ({
       role="button"
       tabIndex={0}
       className={`${opened ? 'visible' : ''} notePopupOverlay`}
+      ref={popupOverlayRef}
     >
       <AnimatePresence>
         {opened && (
@@ -52,12 +63,14 @@ const NotePopup: React.FC<NotePopupProps> = ({
           >
             <div className="content">
               <textarea
-                ref={notePopupRef}
-                defaultValue={text}
                 id={id}
                 placeholder="Type your note here"
+                ref={notePopupRef}
+                value={textValue}
+                onChange={onChangeTextValue}
               />
             </div>
+            <span>{textValue.length}/1000</span>
           </NotePopupElement>
         )}
       </AnimatePresence>

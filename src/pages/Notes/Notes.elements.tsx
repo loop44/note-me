@@ -4,6 +4,16 @@ export const NotesWrapper = styled.div`
   height: 100%;
   transition: background-color 0.3s ease-in-out;
   background-color: ${(props) => (props.theme.main === 'dark' ? '#343539' : '#fff')};
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: none;
+  }
 
   .notePopupOverlay {
     position: fixed;
@@ -122,7 +132,7 @@ export const Note = styled.div`
   position: relative;
 
   &.dragOverlay {
-    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
     cursor: grabbing;
   }
 
@@ -157,6 +167,7 @@ export const Note = styled.div`
 
 export const NotePopupElement = styled.div`
   border-radius: 10px;
+  position: relative;
   .content {
     width: 564px;
     margin: 0 auto;
@@ -176,9 +187,25 @@ export const NotePopupElement = styled.div`
     line-height: 30px;
     color: #3c3d43;
 
+    &::-webkit-scrollbar {
+      width: 0.3rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: none;
+    }
+
     &::placeholder {
       color: #757575;
     }
+  }
+
+  span {
+    position: absolute;
+    right: 20px;
+    bottom: 15px;
+    color: #3c3d43;
   }
 `;
 

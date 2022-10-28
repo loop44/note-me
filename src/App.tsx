@@ -19,6 +19,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Ubuntu', sans-serif;
     height: 100%;
+    overflow: hidden;
   }
 
   #root {

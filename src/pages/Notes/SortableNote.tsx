@@ -10,6 +10,7 @@ import { Note } from './Notes.elements';
 const SortableNote = ({ ...props }) => {
   const [opened, setOpened] = useState<boolean>(false);
   const notePopupRef = useRef<HTMLTextAreaElement>(null);
+  const popupOverlayRef = useRef<HTMLDivElement>(null);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.id,
@@ -26,7 +27,7 @@ const SortableNote = ({ ...props }) => {
   };
 
   const closePopup = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target !== notePopupRef.current) {
+    if (e.target === popupOverlayRef.current) {
       setOpened(false);
       props.changeNote(notePopupRef.current?.value, notePopupRef.current?.id);
     }
@@ -51,6 +52,7 @@ const SortableNote = ({ ...props }) => {
         text={props.text}
         id={props.id}
         notePopupRef={notePopupRef}
+        popupOverlayRef={popupOverlayRef}
         style={props.style}
       />
     </>
