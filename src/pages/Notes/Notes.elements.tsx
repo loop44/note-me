@@ -34,6 +34,17 @@ export const NotesWrapper = styled.div`
       pointer-events: all;
     }
   }
+
+  .plusMobile {
+    display: none;
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+
+    @media (max-width: 36.25em) {
+      display: block;
+    }
+  }
 `;
 
 export const Sidebar = styled.div`
@@ -46,14 +57,26 @@ export const Sidebar = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 32px;
+  padding: 1.875rem 2rem;
 
   transition: background-color 0.3s ease-in-out;
   background-color: ${(props) => (props.theme.main === 'dark' ? '#3C3D43' : '#fffdfa')};
+
+  @media (max-width: 36.25em) {
+    display: none;
+  }
 `;
 
 export const NotesContent = styled.div`
   padding: 2.5rem 12rem 2.5rem 14rem;
+
+  @media (max-width: 61.563em) {
+    padding: 2.5rem 6rem 2.5rem 9rem;
+  }
+
+  @media (max-width: 36.25em) {
+    padding: 2rem;
+  }
 `;
 
 export const ContentHeader = styled.div`
@@ -76,6 +99,10 @@ export const ContentHeader = styled.div`
       transition: color 0.3s ease-in-out;
       color: ${(props) => (props.theme.main === 'dark' ? '#fff' : '#000')};
 
+      @media (max-width: 36.25em) {
+        max-width: 9.375rem;
+      }
+
       &::placeholder {
         color: #808080;
       }
@@ -88,6 +115,14 @@ export const ContentHeader = styled.div`
 
   img {
     width: 1.5rem;
+  }
+
+  .logOutMobile {
+    display: none;
+
+    @media (max-width: 36.25em) {
+      display: block;
+    }
   }
 `;
 
@@ -173,6 +208,10 @@ export const NotePopupElement = styled.div`
     margin: 0 auto;
     padding: 40px;
     height: 540px;
+
+    @media (max-width: 36.25em) {
+      width: 100%;
+    }
   }
 
   textarea {
@@ -227,5 +266,9 @@ export const DeleteBlock = styled.div`
       rgba(9, 9, 121, 0) 0%,
       rgba(255, 0, 0, 0.06206232492997199) 100%
     );
+  }
+
+  @media (max-width: 36.25em) {
+    width: 80px;
   }
 `;

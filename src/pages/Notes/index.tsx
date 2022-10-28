@@ -24,6 +24,8 @@ import LogOutSvg from '../../assets/icons/log-out.svg';
 import LogOutSvgDark from '../../assets/icons/log-out-dark.svg';
 import PlusSvg from '../../assets/icons/plus.svg';
 import PlusSvgDark from '../../assets/icons/plus-dark.svg';
+import PlusMobile from '../../assets/icons/plus-mobile.svg';
+import PlusMobileDark from '../../assets/icons/plus-mobile-dark.svg';
 import SearchSvg from '../../assets/icons/search.svg';
 import LogoSvg from '../../assets/images/logo-icon.svg';
 import LogoSvgDark from '../../assets/images/logo-icon-dark.svg';
@@ -250,13 +252,13 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
         <Sidebar>
           {darkTheme ? (
             <>
-              <img src={LogoSvgDark} width={48} alt="" />
+              <img className="logoIcon" src={LogoSvgDark} width={48} alt="" />
               <input type="image" width={32} src={PlusSvgDark} alt="" onClick={addItem} />
               <input type="image" width={32} src={LogOutSvgDark} alt="" onClick={logOut} />
             </>
           ) : (
             <>
-              <img src={LogoSvg} width={48} alt="" />
+              <img className="logoIcon" src={LogoSvg} width={48} alt="" />
               <input type="image" width={32} src={PlusSvg} alt="" onClick={addItem} />
               <input type="image" width={32} src={LogOutSvg} alt="" onClick={logOut} />
             </>
@@ -273,9 +275,29 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
               />
             </div>
             {darkTheme ? (
-              <input type="image" src={LightModeSvg} alt="" onClick={changeTheme} />
+              <>
+                <input
+                  className="logOutMobile"
+                  type="image"
+                  width={24}
+                  src={LogOutSvgDark}
+                  alt=""
+                  onClick={logOut}
+                />
+                <input type="image" src={LightModeSvg} alt="" onClick={changeTheme} />
+              </>
             ) : (
-              <input type="image" src={DarkModeSvg} alt="" onClick={changeTheme} />
+              <>
+                <input
+                  className="logOutMobile"
+                  type="image"
+                  width={24}
+                  src={LogOutSvg}
+                  alt=""
+                  onClick={logOut}
+                />
+                <input type="image" src={DarkModeSvg} alt="" onClick={changeTheme} />
+              </>
             )}
           </ContentHeader>
           <Greeting>
@@ -359,6 +381,25 @@ const Notes: React.FC<NoteProps> = ({ logOut, name, isAnonymous }) => {
             </Error>
           )}
         </AnimatePresence>
+        {darkTheme ? (
+          <input
+            className="plusMobile"
+            type="image"
+            width={60}
+            src={PlusMobileDark}
+            alt=""
+            onClick={addItem}
+          />
+        ) : (
+          <input
+            className="plusMobile"
+            type="image"
+            width={60}
+            src={PlusMobile}
+            alt=""
+            onClick={addItem}
+          />
+        )}
       </NotesWrapper>
     </ThemeProvider>
   );

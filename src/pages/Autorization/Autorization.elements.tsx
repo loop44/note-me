@@ -39,6 +39,10 @@ export const LeftCol = styled.div`
     line-height: 2rem;
     color: #808080;
   }
+
+  @media (max-width: 45.625em) {
+    display: none;
+  }
 `;
 
 export const RightCol = styled.div`
@@ -64,6 +68,9 @@ export const RightCol = styled.div`
   & img {
     align-self: flex-start;
     margin-bottom: 75px;
+  }
+  @media (max-width: 45.625em) {
+    width: 100%;
   }
 
   .changeAuthMethod {
